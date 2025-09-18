@@ -1,2 +1,99 @@
-Ready for assignment 2.
+<html>
 
+<head>
+    <style>
+        body {
+            background-color: black;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
+    <script type="text/javascript" src="http://localhost:8000/cs460student/02/loader.js"></script>
+
+    <script>
+
+        SIZE = 20;
+        GAP = 5;
+        SELECTED_CUBE = 0;
+        ROTATE_CAMERA = false;
+
+
+        window.onload = function () {
+
+            r = new X.renderer3D();
+            r.init();
+
+            for (var z = -5; z < 6; z++) {
+                for (var y = -5; y < 6; y++) {
+                    for (var x = -5; x < 6; x++) {
+                        new_cube = new X.cube();
+                        new_cube.transform.translateX((SIZE + GAP) * x);
+                        new_cube.transform.translateY((SIZE + GAP) * y);
+                        new_cube.transform.translateZ((SIZE + GAP) * z);
+                        r.add(new_cube);
+                    }
+                }
+            }
+            r.camera.position = [0, 0, 500];
+
+            r.render();
+
+            r.interactor.onMouseMove =
+                function (event) {
+                    var cubeid = 0;
+                    cubeid = r.pick(event.offsetX, event.offsetY);
+
+                    if (cubeid != 0) {
+                        SELECTED_CUBE = r.get(cubeid)
+                        console.log(`cube ${cubeid} selected.`)
+                    }
+
+                };
+
+
+            window.onkeypress = function (e) {
+                if (e.key == 'q') {
+                    SELECTED_CUBE.visible = false;
+                }
+
+                if (e.key == 'w') {
+                    var randomR = Math.random(0, 10);
+                    var randomG = Math.random(0, 10);
+                    var randomB = Math.random(0, 10);
+                    SELECTED_CUBE.color = [randomR, randomG, randomB];
+                }
+
+                if (e.key == 'e') {
+                    SELECTED_CUBE.transform.rotateX(10);
+                }
+
+                if (e.key == 'b') {
+                    ROTATE_CAMERA ? r.onRender = function () {
+                        r.camera.rotate([0, 0]);
+                        ROTATE_CAMERA = false;
+                    } :
+
+                    r.onRender = function () {
+                        r.camera.rotate([1, 0]);
+                        ROTATE_CAMERA = true;
+                    }
+
+                }
+
+                if(e.key == 'o') {
+                    download()
+                }
+
+                if(e.key == 'l') {
+                    upload("scene.json")
+                }
+            };
+
+        }
+
+    </script>
+</head>
+
+<body></body>
+
+</html>
