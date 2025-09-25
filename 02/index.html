@@ -8,33 +8,41 @@
     </style>
 
     <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
-    <script type="text/javascript" src="http://localhost:8000/cs460student/02/loader.js"></script>
+    
+    <!-- UPDATE WITH GITHUB PAGES -->
+    <script type="text/javascript" src="https://qinflan.github.io/cs460student/02/loader.js"></script>
 
     <script>
 
+        LAYERS = 11
         SIZE = 20;
         GAP = 5;
         SELECTED_CUBE = 0;
         ROTATE_CAMERA = false;
-
 
         window.onload = function () {
 
             r = new X.renderer3D();
             r.init();
 
-            for (var z = -5; z < 6; z++) {
-                for (var y = -5; y < 6; y++) {
-                    for (var x = -5; x < 6; x++) {
-                        new_cube = new X.cube();
-                        new_cube.transform.translateX((SIZE + GAP) * x);
-                        new_cube.transform.translateY((SIZE + GAP) * y);
-                        new_cube.transform.translateZ((SIZE + GAP) * z);
-                        r.add(new_cube);
+            // Render cubes in shape of a pyramid instead of cube :)
+            for (let z = 0; z < LAYERS; z++) {
+                const cubesInLayer = LAYERS - z;
+                const startX = -((cubesInLayer - 1) * (SIZE + GAP)) / 2;
+                const startY = -((cubesInLayer - 1) * (SIZE + GAP)) / 2;
+
+                for (let y = 0; y < cubesInLayer; y++) {
+                    for (let x = 0; x < cubesInLayer; x++) {
+                        const cube = new X.cube();
+                        cube.transform.translateX(startX + x * (SIZE + GAP));
+                        cube.transform.translateY(startY + y * (SIZE + GAP));
+                        cube.transform.translateZ(z * (SIZE + GAP));
+                        r.add(cube);
                     }
                 }
             }
-            r.camera.position = [0, 0, 500];
+
+            r.camera.position = [400, 400, 0];
 
             r.render();
 
@@ -50,21 +58,25 @@
 
                 };
 
-
             window.onkeypress = function (e) {
                 if (e.key == 'q') {
                     SELECTED_CUBE.visible = false;
                 }
 
                 if (e.key == 'w') {
-                    var randomR = Math.random(0, 10);
-                    var randomG = Math.random(0, 10);
-                    var randomB = Math.random(0, 10);
-                    SELECTED_CUBE.color = [randomR, randomG, randomB];
+                    colorPalette = [
+                        [0.71, 1, 0.75],
+                        [0.63, 1, 0.63],
+                        [0.78, 1, 0.78],
+                        [0.85, 1, 0.73],
+                        [0.89, 1, 0.88]
+                    ]
+                    randomColorIndex = Math.floor(Math.random() * colorPalette.length);
+                    SELECTED_CUBE.color = colorPalette[randomColorIndex];
                 }
 
                 if (e.key == 'e') {
-                    SELECTED_CUBE.transform.rotateX(10);
+                    SELECTED_CUBE.transform.rotateX(1);
                 }
 
                 if (e.key == 'b') {
